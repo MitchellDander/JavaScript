@@ -4,11 +4,10 @@
 
 <script>
 
-var s;
 var scl = 20;
 var snakeX = 0;
 var snakeY = 0;
-var snakeXspeed = 10;
+var snakeXspeed = 1;
 var snakeYspeed = 0;
 var snakeTotal = 0;
 var snakeTail = [];
@@ -17,14 +16,14 @@ var foodY = 0;
 var highScore = 0;
 var showingWinScreen = false;
 
-gs=tc=20;
+
 
 //input 
 function handleMouseClick(evt) {
 		if (showingWinScreen) {
 				snakeX = 0;
 				snakeY = 0;
-				snakeXspeed = 10;
+				snakeXspeed = 0;
 				snakeYspeed = 0;
 				snakeTotal = 0;
 				snakeTail = [];
@@ -35,13 +34,13 @@ function handleMouseClick(evt) {
 //input			
 function keyPressed(evt) {
 		if (evt.keyCode==38) {
-				direction(0, -10);
+				direction(0, -1);
 		} else if (evt.keyCode==40) {
-				direction(0, 10);
+				direction(0, 1);
 		} else if (evt.keyCode==39) {
-				direction(10, 0);
+				direction(1, 0);
 		} else if (evt.keyCode==37) {
-				direction(-10, 0);
+				direction(-1, 0);
 		}
 }
 
@@ -52,8 +51,8 @@ function direction(x, y) {
 
 //random location for food
 function pickLocation() {
-		X = Math.floor(Math.random()*tc);
-		Y = Math.floor(Math.random()*tc);
+		X = Math.floor(Math.random()*20);
+		Y = Math.floor(Math.random()*20);
 		foodX = X * 20;
 		foodY = Y * 20;
 		return;
@@ -101,20 +100,20 @@ function drawEverything() {
 		if (showingWinScreen) {
 				canvasContext.fillStyle = "white";
 				if(snakeTotal >= highScore) {
-						canvasContext.fillText("New High Score!   " + snakeTotal,125,300);
+						canvasContext.fillText("New High Score!   " + snakeTotal,115,200);
 				} else {
-						canvasContext.fillText("Your score:  " + snakeTotal,135,300);
+						canvasContext.fillText("Your score:  " + snakeTotal,130,200);
 				}
-				canvasContext.fillText("Click to continue",125,450);
+				canvasContext.fillText("Click to continue",125,350);
 				return;
 		}
 				
 		//tail
 		canvasContext.fillStyle="lime";
 		for (var i=0; i < snakeTail.length; i++) {
-				canvasContext.fillRect(snakeTail[i].x, snakeTail[i].y, gs,gs);
+				canvasContext.fillRect(snakeTail[i].x, snakeTail[i].y, scl,scl);
 				//death 
-				if (snakeTail[i].x == snakeX && snakeTail[i].y ==snakeY) {
+				if (snakeTail[i].x == snakeX && snakeTail[i].y == snakeY) {
 						showingWinScreen = true;
 				}
 		}
@@ -148,8 +147,8 @@ function moveEverything() {
 				return;
 		}
 				
-		snakeX = snakeX + snakeXspeed;
-		snakeY = snakeY + snakeYspeed;
+		snakeX = snakeX + (snakeXspeed*scl);
+		snakeY = snakeY + (snakeYspeed*scl);
 		
 		if (snakeX > canvas.width) {
 				snakeX = -20}
