@@ -1,0 +1,166 @@
+<html>
+
+<canvas tabindex ="1" id="gameCanvas" width="400" height="400"></canvas>
+
+<script>
+
+var s;
+var scl = 20;
+var snakeX = 0;
+var snakeY = 0;
+var snakeXspeed = 10;
+var snakeYspeed = 0;
+var snakeTotal = 0;
+var snakeTail = [];
+var foodX = 0;
+var foodY = 0;
+var highScore = 0;
+var showingWinScreen = false;
+
+gs=tc=20;
+
+//input 
+function handleMouseClick(evt) {
+		if (showingWinScreen) {
+				snakeX = 0;
+				snakeY = 0;
+				snakeXspeed = 10;
+				snakeYspeed = 0;
+				snakeTotal = 0;
+				snakeTail = [];
+				showingWinScreen = false;
+		}
+}
+
+//input			
+function keyPressed(evt) {
+		if (evt.keyCode==38) {
+				direction(0, -10);
+		} else if (evt.keyCode==40) {
+				direction(0, 10);
+		} else if (evt.keyCode==39) {
+				direction(10, 0);
+		} else if (evt.keyCode==37) {
+				direction(-10, 0);
+		}
+}
+
+function direction(x, y) {
+		snakeXspeed = x;
+		snakeYspeed = y;
+}
+
+//random location for food
+function pickLocation() {
+		X = Math.floor(Math.random()*tc);
+		Y = Math.floor(Math.random()*tc);
+		foodX = X * 20;
+		foodY = Y * 20;
+		return;
+}
+
+//checks if you eat the food
+function eat() {
+		if (snakeX == foodX && snakeY == foodY) {
+				snakeTotal ++;
+				pickLocation();
+		} else {
+		}
+}
+
+
+//update highscore
+function checkScore() {
+		if (snakeTotal > highScore) {
+		highScore = snakeTotal}
+}
+
+//loading everything
+window.onload = function() {
+		canvas = document.getElementById('gameCanvas');
+		canvasContext = canvas.getContext('2d');
+		var framesPerSecond = 10;
+		setInterval(function() {
+				drawEverything();
+				moveEverything()
+				eat();
+				checkScore();
+		}, 1000/ framesPerSecond );
+		
+		pickLocation();
+		canvas.onkeydown = keyPressed;	
+		canvas.addEventListener('mousedown',handleMouseClick);
+}
+
+function drawEverything() {
+		//background
+		canvasContext.fillStyle = "grey";
+		canvasContext.fillRect(0,0,canvas.width,canvas.height);
+		
+		//endscreen 
+		if (showingWinScreen) {
+				canvasContext.fillStyle = "white";
+				if(snakeTotal >= highScore) {
+						canvasContext.fillText("New High Score!   " + snakeTotal,125,300);
+				} else {
+						canvasContext.fillText("Your score:  " + snakeTotal,135,300);
+				}
+				canvasContext.fillText("Click to continue",125,450);
+				return;
+		}
+				
+		//tail
+		canvasContext.fillStyle="lime";
+		for (var i=0; i < snakeTail.length; i++) {
+				canvasContext.fillRect(snakeTail[i].x, snakeTail[i].y, gs,gs);
+				//death 
+				if (snakeTail[i].x == snakeX && snakeTail[i].y ==snakeY) {
+						showingWinScreen = true;
+				}
+		}
+		
+		//creating tail array
+		snakeTail.push( {x:snakeX,y:snakeY} );
+		while (snakeTail.length > snakeTotal) {
+				snakeTail.shift();
+		}
+		//snake
+		canvasContext.fillStyle = "black";
+		canvasContext.fillRect(snakeX,snakeY,20,20);
+		
+		//food
+		canvasContext.fillStyle = "red";
+		canvasContext.fillRect(foodX, foodY, 20, 20);
+		
+		//scoreboard
+		canvasContext.font = ("bold 20px Arial");
+		canvasContext.fillStyle = "white";
+		canvasContext.fillText("Score: " + snakeTotal,250,75,);
+		
+		canvasContext.font = ("bold 20px Arial");
+		canvasContext.fillStyle = "white";
+		canvasContext.fillText("High Score: " + highScore,250,55,);
+}
+
+
+function moveEverything() {
+		if(showingWinScreen) {
+				return;
+		}
+				
+		snakeX = snakeX + snakeXspeed;
+		snakeY = snakeY + snakeYspeed;
+		
+		if (snakeX > canvas.width) {
+				snakeX = -20}
+		if (snakeX < -20) {
+				snakeX = canvas.width}
+				
+		if (snakeY > canvas.height) {
+				snakeY = -20}
+		if (snakeY < -20) {
+				snakeY = canvas.height}
+}
+
+</script>
+</html>
